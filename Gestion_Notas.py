@@ -277,47 +277,33 @@ def almacenar_mostrar1(encontrado, opcion3, elemento_buscar, estudiantes):
 # FUNCIONES DE BUSCAR----------------------------------------------------------------------
 def funciones_busqueda(opcion3, elemento_buscar):
     if opcion3 == 1:
-        encontrado = False
-        for i in range(len(estudiantes)):
-            if elemento_buscar == estudiantes[i]["total"]:
-                encontrado = True
-        return encontrado
-    elif opcion3 == 2:
+        for estudiante in estudiantes:
+            if elemento_buscar == estudiante["total"]:
+                return True
+        return False
+
+    elif opcion3 in [2, 3]:
         inicio = 0
         fin = len(estudiantes) - 1
         while inicio <= fin:
-            indice_medio = (inicio + fin) // 2
-            valor_medio = estudiantes[indice_medio]["total"]
-            if elemento_buscar == valor_medio:
-                return True
-            elif elemento_buscar < valor_medio:
-                fin = indice_medio - 1
-            elif elemento_buscar > valor_medio:
-                inicio = indice_medio + 1
-        return False
+            if opcion3 == 2:
+                indice = (inicio + fin) // 2
+            else:
+                indice = inicio + (
+                    (elemento_buscar - estudiantes[inicio]["total"])
+                    / (estudiantes[fin]["total"] - estudiantes[inicio]["total"])
+                ) * (fin - inicio)
+                indice = int(indice)
 
-    elif opcion3 == 3:
-        inicio = 0
-        fin = len(estudiantes) - 1
-        while (
-            inicio <= fin
-            and estudiantes[inicio]["total"]
-            <= elemento_buscar
-            <= estudiantes[fin]["total"]
-        ):
-            indice_estimado = inicio + (
-                (elemento_buscar - estudiantes[inicio]["total"])
-                / (estudiantes[fin]["total"] - estudiantes[inicio]["total"])
-            ) * (fin - inicio)
-            indice_estimado = int(indice_estimado)
-            valor_medio = estudiantes[indice_estimado]["total"]
+            valor_medio = estudiantes[indice]["total"]
             if elemento_buscar == valor_medio:
                 return True
             elif elemento_buscar < valor_medio:
-                fin = indice_estimado - 1
-            elif elemento_buscar > valor_medio:
-                inicio = indice_estimado + 1
-    return True
+                fin = indice - 1
+            else:
+                inicio = indice + 1
+        return False
+    return False
 
 # FUNCION DE ELIMINAR-----------------------------------------------------------------------
 def eliminar(eliminado):
