@@ -1,79 +1,50 @@
 # ----------------------------------------------------------------------------------------
 def login(user, pasw):
-    user1 = str(input("USUARIO: "))
-    pasw1 = str(input("CONTRASEÑA: "))
-    if user1 != user:
-        print("\nUsuario Incorrecto")
-        login(user, pasw)
-    elif pasw1 != pasw:
-        print("\nContraseña Incorrecta")
-        login(user, pasw)
-    return user1
+    while True:
+        user1 = str(input("USUARIO: "))
+        pasw1 = str(input("CONTRASEÑA: "))
+        if user1 != user:
+            print("\nUsuario Incorrecto")
+        elif pasw1 != pasw:
+            print("\nContraseña Incorrecta")
+        else:
+            return user1
 
-def menu():
-    opcion = int(
-        input(
-            "\n1.- Registrar Profesor\n2.- Ordenar y Mostrar Calificaciones\n3.- Buscar Calificacion\n4.- Eliminar un estudiante\n5.- Salir\nElija una opcion: "
-        )
-    )
-    return opcion
-
-def menu2():
-    opcion = int(
-        input(
-            "\nSelecione el metodo de Ordenamiento\n1.- Burbuja\n2.- Insercion\n3.- Seleccion\n4.- MergeSort\n5.- QuickSort\n6.- Salir\n"
-        )
-    )
-    return opcion
-
-def menu3():
-    opcion = int(
-        input(
-            "\nSelecione el metodo de Busqueda\n1.- Lineal\n2.- Binaria\n3.- Interpolacion\n4.- Salir\n"
-        )
-    )
-    return opcion
-
-def validar_flotante(nota):
-    try:
-        float(nota)
-        return True
-    except:
-        return False
+def menu(opciones, mensaje):
+    while True:
+        for i, opcion in enumerate(opciones, 1):
+            print(f"{i}.- {opcion}")
+        opcion = int(input(mensaje))
+        if 1 <= opcion <= len(opciones):
+            return opcion
+        else:
+            print("Opción inválida. Intente de nuevo.")
 
 def agregar():
-    continuar = 4
-    seguir = "sg"
-    while seguir != "no":
+    seguir = "si"
+    while seguir == "si":
         id_estudiante = random.randint(1000, 9999)
-        seguir = "sg"
-        while continuar != 0:
-            continuar = 0
-            for i in range(len(estudiantes)):
-                if id_estudiante == estudiantes[i]["id"]:
-                    continuar += 1
+        while any(estudiante["id"] == id_estudiante for estudiante in estudiantes):
+            id_estudiante = random.randint(1000, 9999)
+
         nombre_estudiantes = input("\nIngrese los Datos del Estudiante\n\nNOMBRE: ")
         apellido_estudiante = input("APELLIDO: ")
         correo = input("CORREO: ")
+
         while True:
-            validar1 = input("NOTA 1: ")
-            validar2 = input("NOTA 2: ")
-            if validar1.isdigit() and validar2.isdigit():
-                nota1 = float(validar1)
-                nota2 = float(validar2)
-                while (nota1 <= -1 or nota1 > 10) or (nota2 <= -1 or nota2 > 10):
+            nota1 = input("NOTA 1: ")
+            nota2 = input("NOTA 2: ")
+            if nota1.isdigit() and nota2.isdigit():
+                nota1 = float(nota1)
+                nota2 = float(nota2)
+                if 0 <= nota1 <= 10 and 0 <= nota2 <= 10:
+                    break
+                else:
                     print("\n!!Fuera del Limite!!")
-                    if nota1 > 10 or nota2 > 10:
-                        print("!!Notas sobre (10)!!\n")
-                    if nota1 <= -1 or nota2 <= -1:
-                        print("!!Notas menores (0)!!\n")
-                    nota1 = float(input("NOTA 1: "))
-                    nota2 = float(input("NOTA 2: "))
-                break
+                    print("!!Notas sobre (10)!!\n" if nota1 > 10 or nota2 > 10 else "")
+                    print("!!Notas menores (0)!!\n" if nota1 < 0 or nota2 < 0 else "")
             else:
-                print(
-                    "\nValor ingresado !INCORECTO!\nIngresar un numero entre (0-10)\n"
-                )
+                print("\nValor ingresado !INCORECTO!\nIngresar un numero entre (0-10)\n")
 
         estudiante = {
             "id": id_estudiante,
@@ -84,69 +55,38 @@ def agregar():
             "nota2": round(nota2, 2),
             "total": round((nota1 + nota2), 2),
         }
-        estudiante_txt["Nombre"].append(nombre_estudiantes)
-        estudiante_txt["    ID"].append(id_estudiante)
-        estudiante_txt["Apellido"].append(apellido_estudiante)
-        estudiante_txt["Correo"].append(correo)
-        estudiante_txt["Nota 1"].append(round(nota1, 2))
-        estudiante_txt["Nota 2"].append(round(nota2, 2))
-        estudiante_txt["Total"].append(round((nota1 + nota2), 2))
+
+        for key, value in estudiante.items():
+            estudiante_txt[key].append(value)
+
         estudiantes.append(estudiante)
-        while seguir != "no" and seguir != "si":
-            seguir = input("\nDesea ingresar otro estudiante(si/no): ")
-            seguir = seguir.lower()
-        with open("reportes.txt", "w") as reporte:
-            data = pd.DataFrame(estudiante_txt)
-            reporte.write(
-                "COLEGIO O UNIVERSIDAD: "
-                + docente["unidad_educativa"]
-                + "\nANIO LECTIVO O SEMESTRE: "
-                + docente["anio_lectivo"]
-            )
-            reporte.write(
-                "\nDOCENTE: "
-                + docente["nombre"]
-                + "\nMATERIA: "
-                + docente["materia"]
-                + "\n"
-                + str(data[1:])
-            )
-    con = 0
-    con_aprobados = 0
-    con_suspenso = 0
-    con_reprobados = 0
-    total = 0
-    for estudiante in estudiantes:
-        total += estudiante["total"]
-        if estudiante["total"] >= 14 and estudiante["total"] <= 20:
-            con_aprobados += 1
-        elif estudiante["total"] >= 9 and estudiante["total"] <= 13:
-            con_suspenso += 1
-        elif estudiante["total"] >= 1 and estudiante["total"] <= 8:
-            con_reprobados += 1
-        con += 1
+
+        seguir = ""
+        while seguir not in ["no", "si"]:
+            seguir = input("\nDesea ingresar otro estudiante(si/no): ").lower()
+
+    with open("reportes.txt", "w") as reporte:
+        data = pd.DataFrame(estudiante_txt)
+        reporte.write(f"COLEGIO O UNIVERSIDAD: {docente['unidad_educativa']}\nANIO LECTIVO O SEMESTRE: {docente['anio_lectivo']}")
+        reporte.write(f"\nDOCENTE: {docente['nombre']}\nMATERIA: {docente['materia']}\n{data[1:]}")
+
+    total = sum(estudiante["total"] for estudiante in estudiantes)
+    con = len(estudiantes)
+    con_aprobados = sum(1 for estudiante in estudiantes if 14 <= estudiante["total"] <= 20)
+    con_suspenso = sum(1 for estudiante in estudiantes if 9 <= estudiante["total"] <= 13)
+    con_reprobados = sum(1 for estudiante in estudiantes if 1 <= estudiante["total"] <= 8)
+
     with open("calificaciones.txt", "w") as calificaciones:
         calificaciones.write(
-            "\t\t\t\t\t\t\t\tCOLEGIO O UNIVERSIDAD: "
-            + docente["unidad_educativa"]
-            + "\n\t\t\t\t\t\t\t\t\tREPORTE DE CALIFICACIONES\n\nAño lectivo o Semestre: "
-            + docente["anio_lectivo"]
-            + "\nMateria: "
-            + docente["materia"]
-            + "\n\n"
-            + str(data[1:])
-            + "\n\nRESUMEN\nPromedio del curso: "
-            + str(round((total / con), 2))
-            + "\n*Aprobados (14-20): "
-            + str(con_aprobados)
-            + "\n*Suspenso (09-13): "
-            + str(con_suspenso)
-            + "\n*Reprobados (01-08): "
-            + str(con_reprobados)
-            + "\n\n\n\t\t\t\t\t\t\t------------------------------\n\t\t\t\t\t\t\t\t\t\t\t\tDocente\n\t\t\t\t\t\t\t\t\t\t"
-            + docente["nombre"]
+            f"\t\t\t\t\t\t\t\tCOLEGIO O UNIVERSIDAD: {docente['unidad_educativa']}"
+            f"\n\t\t\t\t\t\t\t\t\tREPORTE DE CALIFICACIONES\n\nAño lectivo o Semestre: {docente['anio_lectivo']}"
+            f"\nMateria: {docente['materia']}\n\n{data[1:]}"
+            f"\n\nRESUMEN\nPromedio del curso: {round((total / con), 2)}"
+            f"\n*Aprobados (14-20): {con_aprobados}"
+            f"\n*Suspenso (09-13): {con_suspenso}"
+            f"\n*Reprobados (01-08): {con_reprobados}"
+            f"\n\n\n\t\t\t\t\t\t\t------------------------------\n\t\t\t\t\t\t\t\t\t\t\t\tDocente\n\t\t\t\t\t\t\t\t\t\t{docente['nombre']}"
         )
-
 # ------------------------------------------------------------------------------------
 def almacenar_mostrar(estudiantes, opcion2):
     metodo = " "
@@ -427,12 +367,19 @@ estudiante_txt = {
     "Nota 2": [1],
     "Total": [1],
 }
+
+opciones1 = ["Registrar Profesor", "Ordenar y Mostrar Calificaciones", "Buscar Calificacion", "Eliminar un estudiante", "Salir"]
+opciones2 = ["Burbuja", "Insercion", "Seleccion", "MergeSort", "QuickSort", "Salir"]
+opciones3 = ["Lineal", "Binaria", "Interpolacion", "Salir"]
+
+mensaje = "\nElija una opcion: "
+
 print("\tSISTEMA DE GESTIÓN DE CALIFICACIONES\n")
 name_user = login(user1, pasw1)
 indice_name = user1.find("@")
 print("\nBienvenido ¡", user1[0:indice_name].upper(), "!")
 while opcion != 5:
-    opcion = menu()
+    opcion = menu(opciones1, mensaje)
     if opcion == 1:
         if len(docente) == 0:
             nombre_docente = input("Ingrese sus Datos\n\nNOMBRE Y APELLIDO: ")
@@ -451,7 +398,7 @@ while opcion != 5:
     elif opcion == 2 and len(estudiantes) > 0:
         opcion2 = 1
         while opcion2 != 6:
-            opcion2 = menu2()
+            opcion2 = menu(opciones2, mensaje)
             funciones_ordenamiento(int(opcion2))
             if 1 <= opcion2 <= 5:
                 almacenar_mostrar(estudiantes, int(opcion2))
@@ -461,7 +408,7 @@ while opcion != 5:
     elif opcion == 3 and len(estudiantes) > 0:
         opcion3 = 1
         while opcion3 != 4:
-            opcion3 = menu3()
+            opcion3 = menu(opciones3, mensaje)
             if 1 <= opcion3 <= 3:
                 elemento_buscar = float(input("Ingrese la Nota que desea buscar: "))
                 respuesta = funciones_busqueda(int(opcion3), float(elemento_buscar))
