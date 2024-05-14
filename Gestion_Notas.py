@@ -307,31 +307,17 @@ def funciones_busqueda(opcion3, elemento_buscar):
 
 # FUNCION DE ELIMINAR-----------------------------------------------------------------------
 def eliminar(eliminado):
-    print(estudiantes)
-    encontrado=False
-    elimina=None
-    for i in range (len(estudiante_txt["    ID"])):
+    for i in range(len(estudiante_txt["    ID"])):
         if estudiante_txt["    ID"][i] == eliminado:
-            print("hola")
-            encontrado=True
-            elimina=i
-    if encontrado is False:
-        print("Estudianto no Registrado")  
-    else:
-        
-        estudiante_txt["    ID"].pop(elimina)
-        estudiante_txt["Apellido"].pop(elimina)
-        estudiante_txt["Correo"].pop(elimina)
-        estudiante_txt["Nombre"].pop(elimina)
-        estudiante_txt["Nota 1"].pop(elimina)
-        estudiante_txt["Nota 2"].pop(elimina)
-        estudiante_txt["Total"].pop(elimina)
-        estudiantes.pop(elimina-1)
-        print(elimina,"\n",estudiante_txt)
-        with open("reportes.txt", "w") as reporte:
-            data = pd.DataFrame(estudiante_txt)
-            reporte.write("COLEGIO O UNIVERSIDAD: "+ docente["unidad_educativa"]+ "\nANIO LECTIVO O SEMESTRE: "+ docente["anio_lectivo"])
-            reporte.write("\nDOCENTE: "+ docente["nombre"]+ "\nMATERIA: "+ docente["materia"]+ "\n"+ str(data[1:]))
+            for key in estudiante_txt:
+                estudiante_txt[key].pop(i)
+            estudiantes.pop(i)
+            with open("reportes.txt", "w") as reporte:
+                data = pd.DataFrame(estudiante_txt)
+                reporte.write("COLEGIO O UNIVERSIDAD: "+ docente["unidad_educativa"]+ "\nANIO LECTIVO O SEMESTRE: "+ docente["anio_lectivo"])
+                reporte.write("\nDOCENTE: "+ docente["nombre"]+ "\nMATERIA: "+ docente["materia"]+ "\n"+ str(data[1:]))
+            return
+    print("Estudiante no Registrado")
 
 # PROGRAMA PRINCIPAL---------------------------------------------------------------------------
 # from tabulate import tabulate ------- Otra libreria para tabular mediante TUPLAS
