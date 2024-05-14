@@ -59,7 +59,7 @@ def agregar():
         for key, value in estudiante.items():
             estudiante_txt[key].append(value)
 
-        estudiantes.append(estudiante)
+        estudiantes.append(estudiante) 
 
         seguir = ""
         while seguir not in ["no", "si"]:
